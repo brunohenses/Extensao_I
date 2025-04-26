@@ -12,23 +12,49 @@
             min-height: 100vh;
         }
         .card {
-            background-color: rgba(255, 255, 255, 0.9); /* Fundo semi-transparente para legibilidade */
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        .nav-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="mb-4">Eventos Culturais Locais</h1>
-        <a href="/adicionar" class="btn btn-primary mb-3">Adicionar Evento</a>
-        <form action="/buscar" method="GET" class="mb-4">
-            <input type="text" name="termo" placeholder="Buscar evento..." class="form-control">
-        </form>
+        <!-- Barra de navegação -->
+        <div class="nav-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Eventos Culturais Locais</h1>
+                <div>
+                    {% if current_user.is_authenticated %}
+                        <span class="mr-3">Olá, {{ current_user.username }}!</span>
+                        <a href="/logout" class="btn btn-danger btn-sm">Sair</a>
+                    {% else %}
+                        <a href="/login" class="btn btn-primary btn-sm">Entrar</a>
+                        <a href="/registro" class="btn btn-secondary btn-sm">Registrar</a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Botões de ação -->
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="/adicionar" class="btn btn-primary">Adicionar Evento</a>
+                <form action="/buscar" method="GET" class="form-inline" style="width: 300px;">
+                    <input type="text" name="termo" placeholder="Buscar evento..." class="form-control w-100">
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de eventos -->
         {% for evento in eventos %}
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">{{ evento.nome }}</h5>
                     <p class="card-text">{{ evento.descricao }}</p>
-                    <p class="card-text"><small class="text-muted">{{ evento.data }} | {{ evento.local }}</small></p>
+                    <p class="card-text"><small class="text-muted">{{ evento.data | format_date }} | {{ evento.local }}</small></p>
                     <div class="mt-2">
                         <a href="/editar/{{ evento.id }}" class="btn btn-warning btn-sm">Editar</a>
                         <a href="/remover/{{ evento.id }}" class="btn btn-danger btn-sm">Remover</a>
