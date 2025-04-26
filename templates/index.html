@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eventos Culturais</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url("{{ url_for('static', filename='img/background.png') }}");
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.9); /* Fundo semi-transparente para legibilidade */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Eventos Culturais Locais</h1>
+        <a href="/adicionar" class="btn btn-primary mb-3">Adicionar Evento</a>
+        <form action="/buscar" method="GET" class="mb-4">
+            <input type="text" name="termo" placeholder="Buscar evento..." class="form-control">
+        </form>
+        {% for evento in eventos %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ evento.nome }}</h5>
+                    <p class="card-text">{{ evento.descricao }}</p>
+                    <p class="card-text"><small class="text-muted">{{ evento.data }} | {{ evento.local }}</small></p>
+                    <div class="mt-2">
+                        <a href="/editar/{{ evento.id }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="/remover/{{ evento.id }}" class="btn btn-danger btn-sm">Remover</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Evento</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url("{{ url_for('static', filename='img/background.png') }}");
+            background-size: cover;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="mb-4">Editar Evento</h2>
+        <form method="POST" action="/editar/{{ evento.id }}">
+            <div class="form-group">
+                <label>Nome do Evento:</label>
+                <input type="text" name="nome" class="form-control" value="{{ evento.nome }}" required>
+            </div>
+            <div class="form-group">
+                <label>Data:</label>
+                <input type="date" name="data" class="form-control" value="{{ evento.data }}" required>
+            </div>
+            <div class="form-group">
+                <label>Local:</label>
+                <input type="text" name="local" class="form-control" value="{{ evento.local }}" required>
+            </div>
+            <div class="form-group">
+                <label>Descrição:</label>
+                <textarea name="descricao" class="form-control" rows="4">{{ evento.descricao }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Atualizar</button>
+            <a href="/" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>

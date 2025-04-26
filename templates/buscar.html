@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buscar Eventos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("{{ url_for('static', filename='img/background.png') }}"); }
+        .container { background-color: rgba(255, 255, 255, 0.95); }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 p-4">
+        <h1>Resultados da Busca</h1>
+        <a href="/" class="btn btn-primary mb-3">Voltar</a>
+        {% if resultados %}
+            {% for evento in resultados %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>{{ evento.nome }}</h5>
+                        <p>{{ evento.descricao }}</p>
+                        <small>{{ evento.data }} | {{ evento.local }}</small>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Nenhum evento encontrado.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

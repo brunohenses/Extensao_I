@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remover Evento</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url("{{ url_for('static', filename='img/background.png') }}");
+            background-size: cover;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .confirmation-box {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-box">
+        <h2 class="mb-4">Confirmar Exclusão</h2>
+        <p>Tem certeza que deseja remover o evento <strong>"{{ evento.nome }}"</strong>?</p>
+        <form method="POST" action="/remover/{{ evento.id }}">
+            <button type="submit" class="btn btn-danger">Sim, Remover</button>
+            <a href="/" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>
