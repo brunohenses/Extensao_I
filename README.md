@@ -110,10 +110,18 @@ Projeto-Eventos/
 ├── requirements.txt
 ├── venv/              # Ambiente virtual
 ├── templates/         # Templates HTML
-│   ├── base.html
+│   ├── adicionar.html
+│   ├── buscar.html
+│   ├── editar.html
 │   ├── index.html
-│   └── eventos.html
+│   ├── login.html
+│   ├── registro.html
+│   └── remover.html
 ├── static/            # Arquivos estáticos (CSS, imagens)
+│   ├── img/
+│       └── background.png
+├── instance/
+│   └── eventos.db
 └── README.md          # Documentação do projeto
 ```
 
