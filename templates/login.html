@@ -18,6 +18,22 @@
 </head>
 <body>
     <div class="container mt-5">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" 
+                         style="background-color: white; 
+                                border: 2px solid var (--dorder-color);
+                                color: var (--text-color);
+                                font-size: 1.1rem;
+                                font-weight: bold;">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <div class="card mx-auto" style="max-width: 400px;">
             <div class="card-body">
                 <h2 class="card-title">Login</h2>

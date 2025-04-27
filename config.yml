@@ -1,0 +1,4 @@
+database:
+  uri: sqlite:///C:\Users\hense\Documents\Projetos\Faculdade\Projeto_de_Extensao_I\instance\eventos.db # Substitua o caminho para o banco de dados SQLite
+security:
+  secret_key: ${SECRET_KEY}  # Será lida do .env

@@ -1,23 +1,40 @@
+import os
+import bcrypt
+import yaml
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from hashlib import sha256
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Carrega variáveis de ambiente
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///eventos.db'
-app.config['SECRET_KEY'] = 's3cr3t_k3y'
-db = SQLAlchemy(app)
 
-# Configuração do Flask Login
+# Carrega configurações do YAML
+with open('config.yml') as f:
+    config = yaml.safe_load(f)
+
+# Configurações
+app.config['SQLALCHEMY_DATABASE_URI'] = config['database']['uri']
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  # Chave lida do .env
+
+db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+# --- Modelos ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(120), nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
 
+    def set_password(self, password):
+        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
 
 class Evento(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,10 +44,12 @@ class Evento(db.Model):
     descricao = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
+# --- Configuração do Login ---
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# --- Filtro de Formatação de Data ---
 @app.template_filter('format_date')
 def format_date(value):
     try:
@@ -39,30 +58,44 @@ def format_date(value):
     except:
         return value
 
+# --- Rotas de Autenticação ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
-        password = sha256(request.form['password'].encode()).hexdigest()
-        user = User.query.filter_by(username=username, password_hash=password).first()
-        if user:
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        
+        if not user:
+            flash('Usuário não encontrado.', 'error')
+            return redirect(url_for('login'))
+
+        if user.check_password(password):
             login_user(user)
             return redirect(url_for('index'))
-        flash('Usuário ou senha inválidos.')
+        else:
+            flash('Usuário ou senha inválidos.', 'error')
+   
     return render_template('login.html')
 
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
         username = request.form['username']
-        password = sha256(request.form['password'].encode()).hexdigest()
+        password = request.form['password']
+        
         if User.query.filter_by(username=username).first():
             flash('Usuário já existe.')
             return redirect(url_for('registro'))
-        new_user = User(username=username, password_hash=password)
+        
+        new_user = User(username=username)
+        new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
+
+        flash('Usuário registrado com sucesso!')
         return redirect(url_for('login'))
+    
     return render_template('registro.html')
 
 @app.route('/logout')
@@ -71,6 +104,7 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+# --- Rotas Principais ---
 @app.route('/')
 def index():
     eventos = Evento.query.all()
